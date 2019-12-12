@@ -1,0 +1,41 @@
+Age (years),Sex,Years of seizure history,Diagnosis,Antiepileptic drugs,Resection location
+39,F,11,TLE,"LSC, LRZ, LEV",R-temporal lobe
+58,F,8,Tumor,CBZ,L-fronto-temporal lobe
+57,M,45,TLE,"LSC, CZP, CBZ",R-temporal lobe
+27,M,11,TLE,"LSC, LRZ, CLB",
+24,M,8,,"LEV, LTG",R-temporal lobe
+25,M,12,Tumor,"CBZ, LSC",R-temporal lobe
+33,F,4,TLE,LEV,L- temporal lobe
+33,M,14,Tumor,"PHN, LEV",R-frontal lobe
+22,M,6,TLE,"PHN, CBZ, LTG",L- temporal lobe
+21,M,2,,"DR, CLB, MJ",
+22,M,12,TLE,"PHN, LRZ",R- temporal lobe
+23,F,23,TLE,"CBZ, LEV, LSC",R- temporal lobe
+53,F,43,TLE,"CBZ, LSC, LEV",L- temporal lobe
+37,F,2,Tumor,"GPN, LSC, LEV, CLB, LRZ",R-frontal lobe
+47,F,4,TLE,"CBZ, CLB",L- temporal lobe
+52,M,13,TLE,"CBZ, CLB",L- temporal lobe
+50,F,26,TLE,"PHN, LTG",R- temporal lobe
+36,F,34,TLE,"LSC, CBZ",L- temporal lobe
+40,M,29,TLE,LEV,R- temporal lobe
+25,F,10,TLE,"CBZ, LSC, LEV",R- temporal lobe
+52,M,27,TLE,"LSC, LRZ",L- temporal lobe
+21,M,11,TLE,"LTG, CBZ",L- temporal lobe
+63,M,0.1,Tumor,PHN,R-parietal lobe
+42,M,22,TLE,CBZ,R-frontal lobe
+22,F,19,TLE,"CZP, LTG, LEV, CLB",R- temporal lobe
+25,F,22,,"LSC, CLB, LTG",R-frontal lobe
+24,F,3,TLE,LEV,L- temporal lobe
+53,M,9,TLE,LEV,L- temporal lobe
+45,F,20,TLE,LTG,R- temporal lobe
+26,F,25,TLE,"CBZ, CLB, LTG",R- temporal lobe
+35,F,14,TLE,"LRZ, DR, PHN",L- temporal lobe
+24,M,6,TLE,"LSC, LRZ, MJ",R- temporal lobe
+53,F,51,TLE,"LSC, CLB",L- temporal lobe
+44,F,3,TLE,LTG,L- temporal lobe
+25,M,14,TLE,CBZ,R- temporal lobe
+19,F,15,TLE,"PB, CLB, GPN, RFM",R- temporal lobe
+30,M,12,TLE,PHN,L- temporal lobe
+26,M,5,TLE,"CBZ, DR",R- temporal lobe
+28,M,-1,TLE,,
+52,F,-1,TLE,,

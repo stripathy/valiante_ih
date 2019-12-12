@@ -1,0 +1,51 @@
+"","Date of surgery","Cell count","recorder_name","age","Sex","Years of seizures history","Diagnosis","Antiepileptic drugs","Resection location","Notes"
+"1",2013-12-03,7,"Homeira",58,"F",8,"Recurrent left temporal glioblastoma ,left frontotemporal tumor","CBZ","Reopening of L frontotemporal crani + tumor resection",NA
+"2",2014-11-04,8,"Lihua",42,"M",22,NA,"CBZ","Right -FL",NA
+"3",2014-12-16,20,"Lihua",25,"M",14,NA,"CBZ","R ATL","R hippocampus: MTS"
+"4",2016-02-29,2,"Homeira",47,"F",4,"left hippocampal cystic lesion","CBZ, CLB","left anterior lobectomy and amygdalohippocampectomy",NA
+"5",2016-03-01,3,"Homeira",52,"M",13,"left hippocampal cystic lesion","CBZ, CLB","left anterior lobectomy and amygdalohippocampectomy",NA
+"6",2016-03-03,4,"Homeira",26,"F",25,NA,"CBZ, CLB, LTG","Right-ATL","right side mesial temporal lobe sclerosis, right temporal polar arachnoid cyst"
+"7",2015-01-05,8,"Lihua",26,"M",5,NA,"CBZ, DR","Right-ATL","suggestive of right medial temporal lobe sclerosis; NB: fMRI quality affected by motion artifacts"
+"8",2014-01-27,11,"Homeira",23,"F",23,"Medically refractory epilepsy","CBZ, LEV, LSC","Right Frontal temporal obectomy and duroplasty",NA
+"9",2015-06-18,1,"Homeira",25,"M",12,"cavernomas in r temporal convexity , left motor strip, and right parietal lobe","CBZ, LSC","Right-ATL",NA
+"10",2016-01-28,3,"Homeira",53,"F",43,"left mesial temporal sclerosis","CBZ, LSC, LEV","left temporal lobe and MTL resection","left mesial temporal sclerosis"
+"11",2014-09-11,2,"Lihua",25,"F",10,"Medically refractory epilepsy","CBZ, LSC, LEV","R Ant Temp lobectomy",NA
+"12",2015-03-02,1,"Lihua",22,"F",19,"right inferior frontal and temporal dysplasia","CZP, LTG, LEV, CLB","right anterior lobectomy, includes resection of superior temporal gyrus and amygdalohippocampectomy","right mesial temporal libe atrphy of hippocampal head and mesial tempiral sclerosis, questionable thickening of left insular cortex on coronal FLAIR seq.; other foci of flair hyperintensity in white matter"
+"13",2015-10-08,9,"Homeira",21,"M",2,"possible lesion based on post OP MRI","DR, CLB,  MJ","lesionectomy (side not described)","Only post OP MRI available: caveroma resection noted; resection of left temporal parietal region"
+"14",2016-02-04,8,"Homeira",37,"F",2,"grade 2 oligodendroglioma","GPN, LSC, LEV, CLB, LRZ","right side resection of tumor, (to parietoccipital sulcus) frontal lobectomy",NA
+"15",2015-06-22,6,"Homeira",33,"F",4,"left temporal lobe lesion centred within left amygdala, small cystic area on inferior lateral aspect of lesion","LEV","left frontotemporal craniotomy for lesionectomy",NA
+"16",2014-06-26,2,"Lihua",40,"M",29,"Right temporal lobe cavernous malformation, medically intractable epilepsy","LEV","R Ant Temp Lobe + amygdalohippocampectomy",NA
+"17",2015-04-20,3,"Lihua",24,"F",3,"left mesial temporal lesion","LEV","left temporal lobectomy-inferior pole of temporal lobe and mesial temporal lesion","CT only: small poorly defined area of decresaed density at medial aspect of left frontal lobe"
+"18",2015-11-09,7,"Homeira",53,"M",9,"left temporal pole cavernoma","LEV","left side lesionectomy and temporal pole resection",NA
+"19",2015-06-16,4,"Homeira",24,"M",8,NA,"LEV, LTG","Right-ATL",NA
+"20",2014-03-04,2,"Lihua",35,"F",14,"Medically intractable epilepsy; left sided Needle mesial temporal sclerosis","LRZ, DR, PHN","L Ant Temp Lobe + Amygdalohippocampectomy",NA
+"21",2014-06-24,5,"Lihua",36,"F",34,"Medically refractory epilepsy; left mesial temporal sclerosis","LSC, CBZ","L Ant Temp lobectomy + mid lobe hippocampectomy",NA
+"22",2014-03-18,1,"Lihua",53,"F",51,"Medically Refractory Epilepsy","LSC, CLB","Left TL + AH",NA
+"23",2015-03-30,3,"Lihua",25,"F",22,"focal cortical lesion","LSC, CLB, LTG","Right frontal cortical resection for localization related epilepsy; lesion related","focal cortical defect in right superior frontal gyrus ( possibel congential or perinatal lesion)"
+"24",2013-11-05,1,"Homeira",57,"M",45,"Temporal Lobe epilepsy","LSC, CZP, CBZ","R temporal lobectomy and cranioplasty",NA
+"25",2014-09-18,8,"Lihua",52,"M",27,"Medically refractory epilepsy","LSC, LRZ","L Ant Temp Lobe + Amygdalohippocampectomy",NA
+"26",2013-11-21,1,"Homeira",27,"M",11,"Medically refractory epilepsy","LSC, LRZ, CLB","Bifrontal implant of subdural strips and depth electrodes, no resection",NA
+"27",2013-12-02,4,"Homeira",39,"F",11,"Medically refractory epilepsy - right frontal origin","LSC, LRZ, LEV,","Right ATL",NA
+"28",2014-03-17,4,"Lihua",24,"M",6,"medically refractory epilepsy, Right mesial temporal sclerosis","LSC, LRZ, MJ","R Ant Temp lobectomy",NA
+"29",2016-02-25,6,"Homeira",45,"F",20,"Unremarable","LTG","right amygdalohippocamectomy","Unremarkable"
+"30",2014-12-02,4,"Lihua",44,"F",3,"left (temporal lobe) chrodal cavernous lesion","LTG","Left: TL, resection of cavernous malformation and amygdalohippocampectomy",NA
+"31",2014-11-03,2,"Lihua",21,"M",11,"CPS with left temporal arachnoid cyst","LTG, CBZ","Left ATL",NA
+"32",2014-12-16,20,"Lihua",19,"F",15,NA,"PB, CLB, GPN, RFM","Anterior 2/3 corpus callosotomy",NA
+"33",2014-11-04,8,"Lihua",63,"M",0.1,"right thalamus lesion (possible glioma)","PHN","Right Parietal Cranitomy for subtotal resection of tumor",NA
+"34",2014-12-18,4,"Lihua",30,"M",12,NA,"PHN","Left ATL: lateral neocortical resection","pre op: unremarkable"
+"35",2015-08-20,2,"Homeira",22,"M",6,NA,"PHN, CBZ, LTG","Left TL: parahippocampal gyrus, hippocampus, mesial structures",NA
+"36",2015-07-23,2,"Homeira",33,"M",14,"left frontal lobe of unclear etiology, see notes","PHN, LEV","Right frontal: r orbitofrontal cortex and  dlpfc (frontal pole and OFC to the falx with orfactory tract preserved)","Lesion appears cystic on T1IR sequences, diff DX: DNET; EEG corelates required"
+"37",2013-12-11,12,"Homeira",22,"M",12,"Medically refractory epilepsy","PHN, LRZ","Right ATL",NA
+"38",2014-05-20,2,"Lihua",50,"F",26,"Medically refractory epilepsy","PHN, LTG","R Ant Temp Lobe + amygdalohippocampectomy",NA
+"39",2013-12-06,1,"Homeira",NA,NA,NA,NA,NA,NA,NA
+"40",2014-04-22,4,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"41",2014-05-15,8,"Lihua",NA,NA,NA,"Tumor",NA,NA,NA
+"42",2014-06-05,7,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"43",2014-06-17,2,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"44",2014-07-15,4,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"45",2014-11-10,4,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"46",2015-02-24,4,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"47",2015-04-07,1,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"48",2014-04-08,1,"Lihua",NA,NA,NA,NA,NA,NA,"benign cavernoma"
+"49",2015-01-27,12,"Lihua",NA,NA,NA,NA,NA,NA,NA
+"50",2015-03-12,8,"Lihua",NA,NA,NA,NA,NA,NA,NA
