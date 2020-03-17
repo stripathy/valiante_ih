@@ -29,7 +29,7 @@ parseCellDateTimes = function(cell_mappings, cell_dates, layer_name = 'L5', reco
 
 # read in mapping information from excel sheets in demographic file that associates experiment dates (subjects, usually) to cell .abf files
 # note that information split up across two experimenters, Homeira and Lihua
-demo_file_name = '~/valiante_ih/raw-data/Demographic information Feb-05-2019-_Request_HM.xlsx'
+demo_file_name = 'raw-data/Demographic information Feb-05-2019-_Request_HM.xlsx'
 l5_sheet_name = 'Layer 5- cells'
 l23_sheet_name = 'L23-cells'
 
@@ -141,7 +141,7 @@ ephys_sheets = c('Total5Homeira-Lastversion.xlsx', 'Total5Lihua-Lastversion.xlsx
 iv_ranges = c('A2:CD10', 'A2:BO18', 'A2:AC10', 'A2:BC18')
 
 kri_ephys_data = lapply(1:length(ephys_sheets), function(sheet_name){
-  curr_path = paste0('~/valiante_ih/raw-data/', ephys_sheets[sheet_name])
+  curr_path = paste0('raw-data/', ephys_sheets[sheet_name])
   rmp_data = read_excel(path = curr_path, sheet = 7)
   colnames(rmp_data) = c('cell_inds', 'rmp')
   
