@@ -1,6 +1,9 @@
 library(stringr)
 library(lme4)
-
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(stats)
 # get ephys data from aibs
 
 # download summary cell types data from aibs cell types portal
@@ -8,7 +11,8 @@ aibs_url = 'http://celltypes.brain-map.org/cell_types_specimen_details.csv'
 
 aibs_ephys_meta = read.csv(url(aibs_url))
 
-# get computed ephys features based on Shreejoy's custom scripts
+# get computed ephys features based on Shreejoy's custom scripts - these are mostly the precomputed features plus a couple extras
+# based on the 2018 Fall release of data
 aibs_ephys_orig =read.csv(file = 'raw-data/aibs_ephys/aibs_aggregated_ephys_plus_morpho_v10.csv')
 
 aibs_ephys = aibs_ephys_orig %>% filter(species == 'Homo Sapiens')
@@ -54,7 +58,7 @@ aibs_human_ephys %<>% mutate(layer_name = paste0('L', structure_layer_name),
                        cohort = 'AIBS')
 
 aibs_human_ephys$diagnosis = plyr::mapvalues(aibs_human_ephys$diagnosis, from = c('epilepsy', 'tumor'), to = c('TLE', 'Tumor'))
-aibs_human_ephys$layer_name = plyr::mapvalues(aibs_human_ephys$layer_name, from = c('L2', 'L3'), to = c('L2.3', 'L2.3'))
+# aibs_human_ephys$layer_name = plyr::mapvalues(aibs_human_ephys$layer_name, from = c('L2', 'L3'), to = c('L2.3', 'L2.3'))
 aibs_human_ephys$sex = plyr::mapvalues(aibs_human_ephys$sex, from = c('Male', 'Female'), to = c('M', 'F'))
 
 

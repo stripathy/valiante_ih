@@ -54,8 +54,10 @@ l23_lihua = parseCellDateTimes(cell_mappings = ephys_meta, cell_dates = ephys_me
 cell_meta_merged = bind_rows(l5_hom, l5_lihua, l23_hom, l23_lihua) %>% as_tibble()
 cell_meta_merged$expt_date = ymd(cell_meta_merged$expt_date)
 
-cell_meta_merged %<>% mutate(layer_name = factor(layer_name),
-                             recorder_name = factor(recorder_name))
+cell_meta_merged = cell_meta_merged %>% distinct(cell_inds, .keep_all = T)
+
+cell_meta_merged = cell_meta_merged %>% mutate(layer_name = factor(layer_name),
+                             recorder_name = factor(recorder_name)) 
 
 # 
 # # read in patient chart info
@@ -168,19 +170,47 @@ kri_ephys_data = lapply(1:length(ephys_sheets), function(sheet_name){
   rin = apply(iv_data[, -1], 2, function(vec){
    (vec/iv_data[1]) %>% unlist %>% mean(., na.rm = T) * 1000
   })
+  
+  if_hz_data = read_excel(path = curr_path, sheet = 3, skip = 1)
+  if_hz_names = paste0('if_hz', if_hz_data[, 1] %>% unlist) %>% make.names()
+  if_hz_trans = if_hz_data %>% t() %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_inds')
+  colnames(if_hz_trans) = c('cell_inds', if_hz_names)
+  if_hz_trans[if_hz_trans == -1] <- 0
+  
+  tau_data = read_excel(path = curr_path, sheet = 8, skip = 1)
+  tau_names = paste0('tau', tau_data[, 1] %>% unlist) %>% make.names()
+  tau_trans = tau_data %>% t() %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_inds')
+  colnames(tau_trans) = c('cell_inds', tau_names)
+  
+  inst_freq_data = read_excel(path = curr_path, sheet = 12, skip = 1)
+  inst_freq_names = paste0('inst_freq', inst_freq_data[, 1] %>% unlist) %>% make.names()
+  inst_freq_trans = inst_freq_data %>% t() %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_inds')
+  colnames(inst_freq_trans) = c('cell_inds', inst_freq_names)
+  
+  inst_freq_trans[inst_freq_trans == -1] <- 0
+  
+  # rebound spikes
+  rebound_data = read_excel(path = curr_path, sheet = 5, skip = 1)
+  rebound_names = paste0('rebound', rebound_data[, 1] %>% unlist) %>% make.names()
+  rebound_trans = rebound_data %>% t() %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_inds')
+  rebound_trans[-1] <- mutate_all(rebound_trans[-1], function(x) as.numeric(as.character(x)))
+  colnames(rebound_trans) = c('cell_inds', rebound_names)
+  #rebound_trans <- mutate_all(rebound_trans, function(x) as.numeric(as.character(x)))
+  # print(rebound_trans)
 
   rin_df = rin %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_inds')
   colnames(rin_df) = c('cell_inds', 'rin')
   # sag_names = paste0('sag', sag_data[, 1] %>% unlist) %>% make.names()
   
   rmp_data = rmp_data %>% as.data.frame()
-  rmp_data = Reduce(merge, list(rmp_data, sag_trans, sag_ratio_trans, ap_trans, rin_df))
+  rmp_data = Reduce(merge, list(rmp_data, sag_trans, sag_ratio_trans, ap_trans, rin_df, if_hz_trans, 
+                                tau_trans, inst_freq_trans, rebound_trans))
   return(rmp_data)
 }) %>% bind_rows()
 
 kri_ephys_data %<>% rename(cell_id = cell_inds)
 
-joined_ephys_data = left_join(patient_cell_meta, kri_ephys_data)
+joined_ephys_data = left_join(patient_cell_meta, kri_ephys_data %>% distinct(cell_id, .keep_all = T))
 
 joined_ephys_data$cohort = 'KRI'
 
