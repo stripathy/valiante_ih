@@ -19,8 +19,6 @@ aibs_model_df$term = factor(aibs_model_df$term, levels = c('age', 'sexM', 'layer
 aibs_model_df$var_type = factor(c('layer', 'layer', 'layer', 'demo', 'demo'), levels = c('layer', 'demo'))
 aibs_model_df$source = 'Allen'
 
-
-
 kri_valid_demo_cells = joined_ephys_data %>% filter(!is.na(age), !is.na(sex), unique_subject) %>% rename(layer = layer_name)
 kri_valid_demo_cells$diagnosis  = plyr::mapvalues(kri_valid_demo_cells$diagnosis, c('TLE', 'Tumor', NA, ''), c('Epilepsy', 'Tumor', 'Other', 'Other'))
 kri_valid_demo_cells$diagnosis[is.na(kri_valid_demo_cells$diagnosis)] = 'Other'
@@ -67,10 +65,10 @@ model_coeff_comb_plot = model_df_merged %>% ggplot(aes(x = term, y = estimate, c
   facet_wrap(~source, scales = 'free')
 
 
-kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer, from = c('L2.3', 'L5'), to = c('layer2/3', 'layer5'))
+kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer_name, from = c('L2.3', 'L5'), to = c('layer2/3', 'layer5'))
 kri_valid_demo_cells$source = 'Krembil (Toronto)'
 
-aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('layer2', 'layer3', 'layer5'))
+aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer_name, from = c('2', '3', '5'), to = c('layer2', 'layer3', 'layer5'))
 aibs_human_pyr_ephys$source = 'Allen (Seattle)'
 
 comb_plot_dataset = bind_rows(kri_valid_demo_cells, aibs_human_pyr_ephys %>% filter(layer %in% c('layer2', 'layer3', 'layer5')))
