@@ -5,13 +5,18 @@ df %>% drop_na
 
 aibs_human_ephys %>% head
 
-ephys_features = c('rmp', 'rin', 'apthr', 'apamp', 'aphw', 'apvel', 'rheo', 'maxfreq', 'adratio', 'fislope', 'avgisi', 'sagamp.400')
+ephys_features = c('rmp', 'rin', 'apthr', 'apamp', 'aphw', 'apvel', 'rheo', 'maxfreq', 'adratio', 'fislope', 'avgisi', 'sag')
 
 
+df =aibs_human_ephys %>% filter(dendrite_type %in% c('spiny', 'aspiny', 'sparsely spiny')) 
 
-complete_aibs_human_ephys = aibs_human_ephys %>% filter(dendrite_type == 'spiny') %>% dplyr::select(ephys_features, ) %>% drop_na
-rownames(complete_aibs_human_ephys) = aibs_human_ephys %>% filter(dendrite_type == 'spiny') %>% dplyr::select(c(ephys_features, 'name')) %>% drop_na %>% pull(name)
 
+df = df %>% select(name, adaptation:avg_isi, f_i_curve_slope:fast_trough_v_short_square, latency:peak_v_short_square, ri, threshold_i_long_square:rheo_first_spike_hw)
+
+complete_aibs_human_ephys = df %>% drop_na
+rownames(complete_aibs_human_ephys) = df %>% drop_na %>% pull(name)
+
+complete_aibs_human_ephys = complete_aibs_human_ephys %>% select(-name)
 
 library(umap)
 aibs_human_ephys_umap = umap(complete_aibs_human_ephys)
@@ -24,7 +29,7 @@ aibs_human_ephys_umap_new = merge(aibs_human_ephys_umap_new, cluster_id_df, by =
 aibs_human_ephys_umap_new$cluster = aibs_human_ephys_umap_new$cluster %>% factor()
 
 
-aibs_human_ephys_umap_new %>% ggplot(aes(x = V1, y = V2, color = layer_name, shape = cluster)) + geom_point(size = 2, alpha = .7)
+aibs_human_ephys_umap_new %>% ggplot(aes(x = V1, y = V2, color = dendrite_type)) + geom_point(size = 2, alpha = .7)
 
 aibs_human_ephys_umap_new %>% filter(V1 > 2, layer_name == 'L5', dendrite_type == 'spiny') %>% head
 
@@ -37,13 +42,13 @@ str(k2)
 joined_ephys_data
 
 
-kri_ephys_features = c('rin', 'rmp', 'apamp', 'aphw', 'sagamp.400', 'inst_freq300', 'if_hz300', 'tau.300', 'sag.300', 'rebound.300')
+kri_ephys_features = c('rin', 'rmp', 'apamp', 'aphw', 'sagamp.400', 'inst_freq300', 'if_hz300', 'if_hz200', 'if_hz100', 'tau.300', 'sag.300', 'rebound.300')
 
 complete_kri_human_ephys = joined_ephys_data %>% 
-  #filter(layer_name %in% c('L2.3', 'L5')) %>% 
-  dplyr::select(kri_ephys_features, ) %>% drop_na %>% as.data.frame()
+  filter(layer_name %in% c('L2.3', 'L3c')) %>% 
+  dplyr::select(cell_id, kri_ephys_features, ) %>% drop_na %>% as.data.frame() %>% select(-cell_id)
 rownames(complete_kri_human_ephys) = joined_ephys_data %>% 
-  #filter(layer_name %in% c('L2.3', 'L5')) %>% 
+  filter(layer_name %in% c('L2.3', 'L3c')) %>% 
   dplyr::select(c(kri_ephys_features, 'cell_id'), ) %>% drop_na %>% pull(cell_id)
 
 
@@ -58,7 +63,7 @@ complete_kri_human_ephys_umap_new = merge(complete_kri_human_ephys_umap$layout %
 
 
 
-k2 <- kmeans(complete_kri_human_ephys, centers = 4, nstart = 25)
+k2 <- kmeans(complete_kri_human_ephys, centers = 2, nstart = 25)
 cluster_id_df = k2$cluster %>% as.data.frame() %>% tibble::rownames_to_column(var = 'cell_id')
 colnames(cluster_id_df) = c('cell_id', 'cluster')
 complete_kri_human_ephys_umap_new = merge(complete_kri_human_ephys_umap_new, cluster_id_df, by = 'cell_id')
