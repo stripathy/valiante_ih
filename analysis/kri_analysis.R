@@ -352,6 +352,8 @@ new_interneuron_cell_ids = kri_extracted_features %>%
   filter(ahp_ratio > .1, fi_fit_slope > .2) %>% 
   pull(cell_id)
 
+new_interneuron_cell_ids = c(new_interneuron_cell_ids, '14605338.abf')
+
 # get RMP from kri sheet, not joined_ephys_data
 joined_ephys_data[joined_ephys_data$cell_id %in% new_interneuron_cell_ids, 'cell_type'] = 'Int'
 joined_ephys_data[is.na(joined_ephys_data$cell_type), 'cell_type'] = 'Pyr'
@@ -407,7 +409,15 @@ cells_to_drop = c('13d03029.abf',
                   '19122022.abf', 
                   '19129072.abf', 
                   '2019_11_04_0113.abf', 
-                  '2015_11_09_0085.abf')
+                  '2015_11_09_0085.abf',
+                  '19129064.abf',
+                  '19129072.abf',
+                  '2020_01_06_0101.abf',
+                  '2020_01_06_0108.abf',
+                  '14n03301.abf',
+                  '14605325.abf',
+                  '14918305.abf'
+                  )
 
 cell_meta = cell_meta %>% filter(!cell_id %in% cells_to_drop)
 
@@ -460,7 +470,7 @@ write.csv(cell_patient_ephys_combined, file = 'summary_tables/cell_patient_ephys
 
 write.csv(patient_meta, file = 'summary_tables/donor_metadata.csv')
 
-
+#### stop here
 
 # provide a simple df that has nicely structured metadata per patient and cell layer
 updated_subject_metadata = patient_cell_meta %>% 

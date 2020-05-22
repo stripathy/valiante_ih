@@ -8,10 +8,10 @@ aibs_human_ephys %>% head
 ephys_features = c('rmp', 'rin', 'apthr', 'apamp', 'aphw', 'apvel', 'rheo', 'maxfreq', 'adratio', 'fislope', 'avgisi', 'sag')
 
 
-df =aibs_human_ephys %>% filter(dendrite_type %in% c('spiny', 'aspiny', 'sparsely spiny')) 
+df =aibs_human_ephys %>% filter(dendrite_type %in% c('spiny')) 
 
 
-df = df %>% select(name, adaptation:avg_isi, f_i_curve_slope:fast_trough_v_short_square, latency:peak_v_short_square, ri, threshold_i_long_square:rheo_first_spike_hw)
+df = df %>% select(name, ephys_features)
 
 complete_aibs_human_ephys = df %>% drop_na
 rownames(complete_aibs_human_ephys) = df %>% drop_na %>% pull(name)
@@ -29,7 +29,10 @@ aibs_human_ephys_umap_new = merge(aibs_human_ephys_umap_new, cluster_id_df, by =
 aibs_human_ephys_umap_new$cluster = aibs_human_ephys_umap_new$cluster %>% factor()
 
 
-aibs_human_ephys_umap_new %>% ggplot(aes(x = V1, y = V2, color = dendrite_type)) + geom_point(size = 2, alpha = .7)
+aibs_human_ephys_umap_new %>% filter(layer_name %in% c('L2', 'L3', 'L5')) %>% 
+  ggplot(aes(x = V1, y = V2, color = layer_name, shape = cluster)) + 
+  geom_point(size = 3, alpha = .7) + 
+  scale_color_manual(values = c('blue', 'turquoise4', 'red')) 
 
 aibs_human_ephys_umap_new %>% filter(V1 > 2, layer_name == 'L5', dendrite_type == 'spiny') %>% head
 
