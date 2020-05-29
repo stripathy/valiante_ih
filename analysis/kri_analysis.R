@@ -320,7 +320,7 @@ kri_extracted_features = read.csv('~/Documents/GitHub/valiante_lab_abf_process/o
 
 kri_extracted_features = left_join(kri_extracted_features, gain_offset_df %>% select(cell_id, rmp))
 
-
+burst_threshold = 75 # in Hz
 library(umap)
 kri_extracted_features %<>% mutate(
   rin = input_resistance, 
@@ -338,13 +338,14 @@ kri_extracted_features %<>% mutate(
   avgisi = mean_isi, 
   cvisi = isi_cv, 
   latency = latency * 1000, # convert to ms
-  tau = tau * 1000
+  tau = tau * 1000,
+  has_burst_algo = ((1/rheo_first_isi) > 75 & !(is.na(rheo_first_isi)))
 )
 
 kri_ephys_features = c('rin', 'rmp', 'apamp', 'ahpamp', 'aphw', 'apvel', 'sagamp',
-                       'adratio', 'first_isi', 'avgisi', 'cvisi',
+                       'adratio', 'rheo_first_isi', 'first_isi', 'avgisi', 'cvisi',
                        'sag', 'fislope',  'latency', 'avg_rate', 'tau', 'rheo',
-                       'apthr',
+                       'apthr','has_burst_algo',
                        'peak_t', 'fast_trough_t', 'trough_t')
 
 new_interneuron_cell_ids = kri_extracted_features %>% 
@@ -463,6 +464,7 @@ cell_patient_ephys_combined = left_join(cell_patient_ephys_combined %>% select(-
 
 cell_patient_ephys_combined = left_join(cell_patient_ephys_combined, zap_data_w_intrinsic_id_final %>% select(cell_id, res_center_freq, res_3dB_freq, res_sharpness, has_resonance))
 
+# cell_patient_ephys_combined = cell_patient_ephys_combined %>% filter(!is.na(rin))
 
 write.csv(cell_patient_ephys_combined, file = 'summary_tables/cell_patient_ephys_combined.csv')
 
@@ -512,7 +514,7 @@ write.csv(kri_ephys_data_all_cells, file = 'summary_tables/all_cells.csv')
 
 
 ### define a final data frame that has just ephys data from cells with "complete" demographic data from patients
-kri_valid_demo_cells = joined_ephys_data %>% filter(!is.na(age), 
+kri_valid_demo_cells = cell_patient_ephys_combined %>% filter(!is.na(age), 
                                                     !is.na(sex), 
                                                     unique_subject,
                                                     # diagnosis %in% c('TLE', 'Tumor')
@@ -525,7 +527,7 @@ write.csv(kri_valid_demo_cells, file = 'summary_tables/cells_w_demographic_data.
 
 
 kri_valid_demo_cells %>% 
-  ggplot(aes(x = age, y = sag.400)) + 
+  ggplot(aes(x = age, y = sag)) + 
   geom_jitter(alpha = .7) + 
   geom_smooth(method = 'lm') + 
   facet_grid(~layer_name) + 

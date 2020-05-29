@@ -5,20 +5,36 @@ library(cowplot)
 
 theme_set(theme_cowplot(14) )
 
+# read summarized aibs's data
+
 
 aibs_human_pyr_ephys = aibs_human_ephys %>% filter(dendrite_type == 'spiny', 
                                                    structure_layer_name %in% c(2, 3, 5)) %>%
   rename(layer = structure_layer_name)
 aibs_human_pyr_ephys$diagnosis  = plyr::mapvalues(aibs_human_pyr_ephys$diagnosis, c('TLE', 'Tumor'), c('Epilepsy', 'Tumor'))
+aibs_human_pyr_ephys$cell_type  = aibs_human_pyr_ephys$dendrite_type
 
 
-kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer_name, from = c('L2.3', 'L5'), to = c('layer2/3', 'layer5'))
+
+### define a final data frame that has just ephys data from cells with "complete" demographic data from patients
+cell_patient_ephys_combined = read.csv('summary_tables/cell_patient_ephys_combined.csv')
+
+kri_valid_demo_cells = cell_patient_ephys_combined %>% filter(!is.na(age), 
+                                                              !is.na(sex), 
+                                                              unique_subject,
+                                                              # diagnosis %in% c('TLE', 'Tumor')
+) %>% 
+  distinct(subject_id, cell_id, .keep_all = T) %>% select(-has_burst)
+
+
+
+kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer_name, from = c('L2.3', 'L5'), to = c('Layer 2/3', 'Layer 5'))
 kri_valid_demo_cells$source = 'Krembil (Toronto)'
 
-aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('layer2', 'layer3', 'layer5'))
+aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('Layer 2', 'Layer 3', 'Layer 5'))
 aibs_human_pyr_ephys$source = 'Allen (Seattle)'
 
-comb_plot_dataset = bind_rows(kri_valid_demo_cells, aibs_human_pyr_ephys %>% filter(layer %in% c('layer2', 'layer3', 'layer5')))
+comb_plot_dataset = bind_rows(kri_valid_demo_cells %>% filter(cell_type == 'Pyr'), aibs_human_pyr_ephys %>% filter(layer %in% c('Layer 2', 'Layer 3', 'Layer 5')))
 comb_plot_dataset$source = factor(comb_plot_dataset$source, levels = c('Krembil (Toronto)', 'Allen (Seattle)'))
 comb_plot_dataset$diagnosis = factor(comb_plot_dataset$diagnosis, levels = c('Epilepsy', 'Tumor', 'Other'))
 
@@ -36,7 +52,7 @@ sag_ratio_vs_amp = comb_plot_dataset %>% filter(source == 'Krembil (Toronto)') %
 ggsave('figures/sag_ratio_vs_amp.pdf', plot = sag_ratio_vs_amp, width = 6, height = 3, units = 'in', scale = 1, useDingbats=FALSE)
 
 sources = c('Krembil (Toronto)', 'Allen (Seattle)')
-layers = c('layer5', 'layer2/3')
+layers = c('Layer 2/3', 'Layer 5')
 
 sag_formula = 'sag ~ (1|subject_id) + age'
 sag_formula_no_demo = 'sag ~ (1|subject_id)'
@@ -53,8 +69,8 @@ for (i in 1:length(sources)){
     curr_cohort = sources[i]
     curr_layer = layers[j]
     
-    if ((curr_cohort == "Allen (Seattle)") & (curr_layer  == "layer2/3")){
-      use_layers = c('layer2','layer3')
+    if ((curr_cohort == "Allen (Seattle)") & (curr_layer  == "Layer 2/3")){
+      use_layers = c('Layer 2', 'Layer 3')
     } else{
       use_layers = curr_layer
     }
@@ -100,7 +116,7 @@ new_df[new_df$cell_id == '19129024.abf', 'colors'] = 'red'
 #new_df[new_df$cell_id %in% c('13d03008.abf','15o08038.abf') , 'sizes'] = 6
 new_df[new_df$cell_id %in% c('15o08038.abf','19129024.abf') , 'sizes'] = 6
 
-krembil_xlim = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'layer5') %>% pull(age) %>% range
+krembil_xlim = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'Layer 5') %>% pull(age) %>% range
 krembil_xlim[1] = krembil_xlim[1] - 1
 krembil_xlim[2] = krembil_xlim[2] + 1
 
@@ -108,43 +124,47 @@ allen_xlim = new_df %>% filter(source == 'Allen (Seattle)') %>% pull(age) %>% ra
 allen_xlim[1] = allen_xlim[1] - 1
 allen_xlim[2] = allen_xlim[2] + 1
 
-sag_ratio_vs_age_l5_krembil = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'layer5') %>% 
-  ggplot(aes(x = age, y = sag.400, group = layer, color = colors, size = sizes)) + 
+sag_ratio_vs_age_l5_krembil = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'Layer 5') %>% 
+  ggplot(aes(x = age, y = sag, group = layer, color = colors, size = sizes)) + 
   geom_smooth(method = 'lm', color = 'grey') + 
   geom_jitter(alpha = .5) + 
   scale_color_identity() + 
   scale_size_identity() + 
   xlim(krembil_xlim) + 
-  xlab('Age (years)') + ylab('Sag ratio')
+  ylim(c(0, .325)) + 
+  xlab('Age (years)') + ylab('Layer 5, Sag ratio')
 
-sag_ratio_vs_age_l23_krembil = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'layer2/3') %>% 
-  ggplot(aes(x = age, y = sag.400, group = layer, color = colors, size = sizes)) + 
+sag_ratio_vs_age_l23_krembil = new_df %>% filter(source == 'Krembil (Toronto)', layer == 'Layer 2/3') %>% 
+  ggplot(aes(x = age, y = sag, group = layer, color = colors, size = sizes)) + 
   geom_smooth(method = 'lm', color = 'grey') + 
   geom_jitter(alpha = .5) + 
   scale_color_identity() + 
   scale_size_identity() + 
   xlim(krembil_xlim) + 
-  xlab('Age (years)') + ylab('Sag ratio')
+  ylim(c(0, .325)) + 
+  xlab('Age (years)') + ylab('Layer 2/3, Sag ratio')
 
-sag_ratio_vs_age_l5_allen = new_df %>% filter(source == 'Allen (Seattle)', layer == 'layer5') %>% 
+sag_ratio_vs_age_l5_allen = new_df %>% filter(source == 'Allen (Seattle)', layer == 'Layer 5') %>% 
   ggplot(aes(x = age, y = sag, group = layer, color = colors, size = sizes)) + 
   geom_smooth(method = 'lm', color = 'grey') + 
   geom_jitter(alpha = .5) + 
   scale_color_identity() +
   scale_size_identity() + 
+  ylim(c(0, .325)) + 
   # xlim(allen_xlim) +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 4)) +
-  xlab('Age (years)') + ylab('Sag ratio')
+  xlab('Age (years)') + ylab('Layer 5, Sag ratio')
 
-sag_ratio_vs_age_l23_allen = new_df %>% filter(source == 'Allen (Seattle)', layer %in% c('layer2', 'layer3')) %>% 
+sag_ratio_vs_age_l23_allen = new_df %>% filter(source == 'Allen (Seattle)', layer %in% c('Layer 2', 'Layer 3')) %>% 
   ggplot(aes(x = age, y = sag, color = colors, size = sizes)) + 
   geom_smooth(method = 'lm', color = 'grey') + 
   geom_jitter(alpha = .5) + 
   scale_color_identity() + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 4)) +
   scale_size_identity() + 
+  ylim(c(0, .325)) + 
   # xlim(allen_xlim) +
-  xlab('Age (years)') + ylab('Sag ratio')
+  xlab('Age (years)') + ylab('Layer 2/3, Sag ratio')
 
 sag_ratio_all_panels = plot_grid(sag_ratio_vs_age_l5_krembil, sag_ratio_vs_age_l5_allen, sag_ratio_vs_age_l23_krembil, sag_ratio_vs_age_l23_allen, ncol = 2, align = 'v')
 
