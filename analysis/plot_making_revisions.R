@@ -21,7 +21,7 @@ cell_patient_ephys_combined = read.csv('summary_tables/cell_patient_ephys_combin
 
 cell_patient_ephys_combined$layer = plyr::mapvalues(cell_patient_ephys_combined$layer_name, 
                                              from = c('L2.3', 'L3c', 'L5'), 
-                                             to = c('Layer 2/3', 'Layer 3C', 'Layer 5'))
+                                             to = c('Layer 2/3', 'Layer 3c', 'Layer 5'))
 cell_patient_ephys_combined$source = 'Krembil (Toronto)'
 
 aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('Layer 2', 'Layer 3', 'Layer 5'))
@@ -34,8 +34,69 @@ comb_plot_dataset$diagnosis = factor(comb_plot_dataset$diagnosis, levels = c('Ep
 rin_plot = comb_plot_dataset %>% arrange(layer) %>% 
   ggplot(aes(x = layer, y = rin)) + geom_boxplot(outlier.alpha = 0) + 
   geom_quasirandom(alpha = .25) + facet_wrap(~source, scales = "free_x") + ylab('Input resistance (MOhm)')
-ggsave('figures/rin_vs_layers_kri_allen.pdf', plot = rin_plot, width = 8, height = 5, units = 'in', scale = 1, useDingbats=FALSE)
 
+apical_plot = comb_plot_dataset %>% filter(!is.na(apical)) %>% arrange(layer) %>% 
+  ggplot(aes(x = apical, y = rin)) + geom_boxplot(outlier.alpha = 0) + 
+  geom_quasirandom(alpha = .25) + facet_wrap(~layer, scales = "free_x") + ylab('Input resistance (MOhm)') + 
+  xlab('Apical dendrite status (Allen)')
+
+combined_rin_apical_plot = plot_grid(rin_plot, apical_plot, nrow = 2, align = 'hv')
+
+ggsave('figures/rin_vs_layers_kri_allen.pdf', plot = combined_rin_apical_plot, width = 8, height = 10, units = 'in', scale = 1, useDingbats=FALSE)
+
+l2 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L2') %>% pull(sag)
+l3 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L3') %>% pull(sag)
+l5 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L5') %>% pull(sag)
+
+wilcox.test(l3, l5)
+wilcox.test(l2, l5)
+wilcox.test(l2, l3)
+
+comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  group_by(layer_name) %>% summarize(mean_sag = mean(sag, na.rm = T),
+                                     sd_sag = sd(sag, na.rm = T),
+                                     n_sag = n())
+
+comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  group_by(layer_name) %>% summarize(mean_rin = mean(rin, na.rm = T),
+                                     sd_rin = sd(rin, na.rm = T),
+                                     n_rin = n())
+
+l2 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L2') %>% pull(rin)
+l3 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L3') %>% pull(rin)
+l5 = comb_plot_dataset %>% filter(source == 'Allen (Seattle)', layer_name == 'L5') %>% pull(rin)
+
+wilcox.test(l3, l5)
+wilcox.test(l2, l5)
+wilcox.test(l2, l3)
+
+allen_layer_v_sag = comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  ggplot(aes(x = layer_name, y = sag, color = layer_name)) + geom_quasirandom(alpha = .75) + 
+  scale_color_manual(values = c('blue', 'turquoise4', 'red')) +
+  xlab('Cortical layer') + ylab('Sag ratio') + theme(legend.position = "none")
+
+allen_depth_v_sag = comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  ggplot(aes(x = depth_norm, y = sag, color = layer_name, group = 1)) + geom_smooth(method = "lm", se = F, alpha = .5, color = "black") + geom_point(alpha = .75) + 
+  scale_color_manual(values = c('blue', 'turquoise4', 'red')) +
+  xlab('Nomalized cortical depth') + ylab('Sag ratio') + theme(legend.position = "none")
+
+allen_layer_v_rin = comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  ggplot(aes(x = layer_name, y = rin, color = layer_name)) + geom_quasirandom(alpha = .75) + 
+  scale_color_manual(values = c('blue', 'turquoise4', 'red')) +
+  xlab('Cortical layer') + ylab('Input Resistance (MOhm)') + theme(legend.position = "none")
+
+allen_depth_v_rin = comb_plot_dataset %>% filter(source == 'Allen (Seattle)') %>% 
+  ggplot(aes(x = depth_norm, y = rin, color = layer_name, group = 1)) + geom_smooth(method = "lm", se = F, alpha = .5, color = "black") + geom_point(alpha = .75) + 
+  scale_color_manual(values = c('blue', 'turquoise4', 'red')) +
+  xlab('Nomalized cortical depth') + ylab('Input Resistance (MOhm)') + theme(legend.position = "none")
+
+comb_plot_dataset %>% arrange(layer) %>% 
+  ggplot(aes(x = layer, y = rin)) + geom_boxplot(outlier.alpha = 0) + 
+  geom_quasirandom(alpha = .25) + facet_wrap(~source, scales = "free_x") + ylab('Input resistance (MOhm)')
+
+allen_layer_sag_fig = plot_grid(allen_layer_v_sag, allen_depth_v_sag, ncol = 2, align = 'hv')
+
+ggsave('figures/allen_layer_sag_fig.pdf', plot = allen_layer_sag_fig, width = 6, height = 3, units = 'in', scale = 1, useDingbats=FALSE)
 
 
 

@@ -134,7 +134,13 @@ mean_ap_wave_features = left_join(ret_list_df, cell_meta)
 
 mean_ap_wave_features = mean_ap_wave_features %>% 
   group_by(layer_name, cell_type, t) %>% 
-  summarize(v = mean(v), dvdt = mean(dvdt), sd_v = sd(v)) %>% arrange(layer_name, cell_type, t)
+  summarize(sd_v = sd(v, na.rm = T),
+            sem_v = sd_v / sqrt(n() - 1),
+            v = mean(v, na.rm = T), 
+            sd_dvdt = sd(dvdt, na.rm = T),
+            sem_dvdt = sd_dvdt / sqrt(n() - 1),
+            dvdt = mean(dvdt), 
+            ) %>% arrange(layer_name, cell_type, t)
 
 kri_ap_curves = bind_rows(kri_ap_curves %>% mutate(type = 'single_cell'), mean_ap_wave_features %>% mutate(type = 'group_average'))
 
@@ -206,16 +212,25 @@ fi_resampled_df = lapply(unique_cell_ids, function(curr_cell_id){
   return(new_ap_df)
 }) %>% bind_rows()
 
-resampled_fi_features = left_join(fi_resampled_df, cell_meta) %>% filter(cell_type == 'Pyr')
+resampled_fi_features = left_join(fi_resampled_df, cell_meta) 
 
 mean_fi_features = resampled_fi_features %>% 
-  group_by(layer_name, stim_amp) %>% 
-  summarize(avg_rate = mean(avg_rate, na.rm = T))
+  group_by(cell_type, layer_name, stim_amp) %>% 
+  summarize(sd_rate = sd(avg_rate, na.rm = T), 
+            sem_rate = sd_rate / sqrt(n() -1 ),
+            avg_rate = mean(avg_rate, na.rm = T))
 
-kri_fi_curves %>% filter(avg_rate > 0, cell_type == 'Pyr') %>% 
+group_avg_fi_features = resampled_fi_features %>% filter(stim_amp == 300) %>%
+  group_by(cell_type, layer_name) %>% 
+  summarize(mean_rate = mean(avg_rate, na.rm = T), 
+            sd_rate = sd(avg_rate, na.rm = T),
+            n_rate = n(),
+            sem_rate = sd_rate / sqrt(n_rate - 1))
+
+kri_fi_curves %>% filter(avg_rate > 0) %>% 
   ggplot(aes(x = stim_amp, y = avg_rate, group = cell_id, color = layer_name)) + 
   scale_color_manual(values = c('blue', 'turquoise4', 'red')) + 
-  geom_line(alpha = .1)  + xlim(0, 400) + facet_wrap(~layer_name) + ylim(0, 50)
+  geom_line(alpha = .1)  + xlim(0, 400) + facet_wrap(~layer_name*cell_type) + ylim(0, 50)
 
 
 library("ggpubr")
@@ -226,7 +241,9 @@ theme_set(
 
 ap_waveform_fig = mean_ap_wave_features %>% filter(cell_type == 'Pyr') %>% arrange(layer_name, t) %>%
   ggplot(aes(x = t*1000, y = v, color = layer_name)) + 
+  #geom_ribbon(aes(ymin = v - sem_v, ymax = v + sem_v, fill = layer_name), alpha = .25, color = NA) + 
   scale_color_manual(values = c('blue', 'turquoise4', 'red')) + 
+  #scale_fill_manual(values = c('blue', 'turquoise4', 'red')) + 
   geom_line() + xlim(c(0, 7.5)) + ylim(c(-50, 40)) + ylab('Voltage (mV)') + xlab('Time (ms)')
 
 ap_dvdt_fig = mean_ap_wave_features %>% filter(cell_type == 'Pyr') %>% arrange(layer_name, t) %>% 
@@ -254,9 +271,11 @@ fi_slope = kri_ephys_long %>% filter(ephys_name %in% kri_ephys_features) %>% fil
   scale_color_manual(values = c('blue', 'turquoise4', 'red')) + 
   geom_boxplot(outlier.alpha = 0)  + geom_quasirandom(alpha = .5, width = .25) + ylab('Rheobase (pA)') + xlab('')
 
-fi_fig = mean_fi_features %>% ggplot(aes(x = stim_amp, y = avg_rate , color = layer_name)) + 
+fi_fig = mean_fi_features %>% filter(cell_type == 'Pyr') %>% ggplot(aes(x = stim_amp, y = avg_rate , color = layer_name)) + 
+  geom_ribbon(aes(ymin = avg_rate - sem_rate, ymax = avg_rate + sem_rate, fill = layer_name), alpha = .25, color = NA) + 
   scale_color_manual(values = c('blue', 'turquoise4', 'red')) + 
-  geom_line() + xlim(c(0, 300))  + ylab('Firing rate (Hz)') + xlab('Current (pA)')
+  scale_fill_manual(values = c('blue', 'turquoise4', 'red')) + 
+  geom_line(aes(y = avg_rate)) + xlim(c(0, 300)) + ylim(c(0, 25)) + ylab('Firing rate (Hz)') + xlab('Current (pA)')
 
 kri_fi_curves = bind_rows(kri_fi_curves %>% mutate(type = 'single_cell'), mean_fi_features %>% mutate(type = 'group_average'))
 

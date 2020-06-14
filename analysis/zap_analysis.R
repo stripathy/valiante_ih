@@ -179,7 +179,8 @@ zap_data_merged_final[zap_data_merged_final$cell_id %in% new_pyr_list, 'cell_typ
 zap_data_merged_final %>% 
   group_by(cell_type, layer_name) %>% 
   summarize(strong_res_pct = sum((resonance_type == 'strong'), na.rm = T) / n(), 
-            weak_res_pct = sum((resonance_type == 'weak'), na.rm = T)/n())
+            weak_res_pct = sum((resonance_type == 'weak'), na.rm = T)/n(), 
+            count = n())
 
 # write csv of zap_data_w_intrinsic_id_final
 write.csv(zap_data_merged_final, 'summary_tables/zap_data_final_summarized.csv')
