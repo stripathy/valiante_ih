@@ -133,9 +133,6 @@ aibs_ephys_mouse %>% filter(dendrite_type == 'spiny') %>%
   geom_jitter(size = 2, alpha = .5) +
   xlab('cortical layer') + ylab('Sag amp (mV, at max hyperpol step)')
 
-
-
-
 aibs_ephys_meta_small$age = lapply(aibs_ephys_meta_small$age, function(age_str) strsplit(age_str[[1]] %>% as.character, split = ' ')[[1]][1] %>% as.numeric) %>% unlist
 
 

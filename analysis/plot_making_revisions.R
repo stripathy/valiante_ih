@@ -19,6 +19,26 @@ aibs_human_pyr_ephys$cell_type  = aibs_human_pyr_ephys$dendrite_type
 ### define a final data frame that has just ephys data from cells with "complete" demographic data from patients
 cell_patient_ephys_combined = read.csv('summary_tables/cell_patient_ephys_combined.csv')
 
+cell_patient_ephys_combined$layer = plyr::mapvalues(cell_patient_ephys_combined$layer_name, 
+                                             from = c('L2.3', 'L3c', 'L5'), 
+                                             to = c('Layer 2/3', 'Layer 3C', 'Layer 5'))
+cell_patient_ephys_combined$source = 'Krembil (Toronto)'
+
+aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('Layer 2', 'Layer 3', 'Layer 5'))
+aibs_human_pyr_ephys$source = 'Allen (Seattle)'
+
+comb_plot_dataset = bind_rows(cell_patient_ephys_combined %>% filter(cell_type == 'Pyr') %>% select(-has_burst), aibs_human_pyr_ephys %>% filter(layer %in% c('Layer 2', 'Layer 3', 'Layer 5')))
+comb_plot_dataset$source = factor(comb_plot_dataset$source, levels = c('Krembil (Toronto)', 'Allen (Seattle)'))
+comb_plot_dataset$diagnosis = factor(comb_plot_dataset$diagnosis, levels = c('Epilepsy', 'Tumor', 'Other'))
+
+rin_plot = comb_plot_dataset %>% arrange(layer) %>% 
+  ggplot(aes(x = layer, y = rin)) + geom_boxplot(outlier.alpha = 0) + 
+  geom_quasirandom(alpha = .25) + facet_wrap(~source, scales = "free_x") + ylab('Input resistance (MOhm)')
+ggsave('figures/rin_vs_layers_kri_allen.pdf', plot = rin_plot, width = 8, height = 5, units = 'in', scale = 1, useDingbats=FALSE)
+
+
+
+
 kri_valid_demo_cells = cell_patient_ephys_combined %>% filter(!is.na(age), 
                                                               !is.na(sex), 
                                                               unique_subject,
@@ -28,21 +48,27 @@ kri_valid_demo_cells = cell_patient_ephys_combined %>% filter(!is.na(age),
 
 
 
-kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer_name, from = c('L2.3', 'L5'), to = c('Layer 2/3', 'Layer 5'))
+kri_valid_demo_cells$layer = plyr::mapvalues(kri_valid_demo_cells$layer_name, 
+                                             from = c('L2.3', 'L3c', 'L5'), 
+                                             to = c('Layer 2/3', 'Layer 3C', 'Layer 5'))
 kri_valid_demo_cells$source = 'Krembil (Toronto)'
 
 aibs_human_pyr_ephys$layer = plyr::mapvalues(aibs_human_pyr_ephys$layer, from = c('2', '3', '5'), to = c('Layer 2', 'Layer 3', 'Layer 5'))
 aibs_human_pyr_ephys$source = 'Allen (Seattle)'
+aibs_human_pyr_ephys = aibs_human_pyr_ephys %>% mutate(sagamp = sagamp.400)
 
 comb_plot_dataset = bind_rows(kri_valid_demo_cells %>% filter(cell_type == 'Pyr'), aibs_human_pyr_ephys %>% filter(layer %in% c('Layer 2', 'Layer 3', 'Layer 5')))
 comb_plot_dataset$source = factor(comb_plot_dataset$source, levels = c('Krembil (Toronto)', 'Allen (Seattle)'))
 comb_plot_dataset$diagnosis = factor(comb_plot_dataset$diagnosis, levels = c('Epilepsy', 'Tumor', 'Other'))
 
 
+
+
 ### supplemental figure showing that sag amplitudes are correlated with sag ratio
 
 sag_ratio_vs_amp = comb_plot_dataset %>% filter(source == 'Krembil (Toronto)') %>% 
-  ggplot(aes(x = sagamp.400, y = sag.400, group = layer)) + 
+  filter(layer %in% c('Layer 2/3', 'Layer 5')) %>%
+  ggplot(aes(x = sagamp, y = sag, group = layer)) + 
   geom_smooth(method = 'lm', color = 'grey') + 
   geom_jitter(alpha = .5) + 
   # scale_color_manual(values = c('black', 'red', 'purple')) + 
